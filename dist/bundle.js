@@ -46,6 +46,20 @@ var createClass = function () {
 
 
 
+var _extends = Object.assign || function (target) {
+  for (var i = 1; i < arguments.length; i++) {
+    var source = arguments[i];
+
+    for (var key in source) {
+      if (Object.prototype.hasOwnProperty.call(source, key)) {
+        target[key] = source[key];
+      }
+    }
+  }
+
+  return target;
+};
+
 
 
 var inherits = function (subClass, superClass) {
@@ -197,19 +211,31 @@ var DateRangePicker = function (_Component) {
       var _this5 = this;
 
       var _props = this.props,
-          children = _props.children,
           containerStyles = _props.containerStyles,
-          containerClass = _props.containerClass;
+          containerClass = _props.containerClass,
+          pickerId = _props.pickerId;
+
+      var pickerFound = false;
+      var refProp = {
+        ref: function ref(picker) {
+          _this5.$picker = $(picker);
+        }
+      };
+      var children = React__default.Children.map(this.props.children, function (child) {
+        if (!pickerFound && child.props && child.props.id === pickerId) {
+          pickerFound = true;
+          return React__default.cloneElement(child, refProp);
+        } else {
+          return child;
+        }
+      });
 
       return React__default.createElement(
         'div',
-        {
-          ref: function ref(picker) {
-            _this5.$picker = $(picker);
-          },
+        _extends({
           className: containerClass,
           style: containerStyles
-        },
+        }, pickerFound ? {} : refProp),
         children
       );
     }

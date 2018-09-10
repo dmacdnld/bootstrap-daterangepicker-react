@@ -1,18 +1,16 @@
 {
-  "name": "react-bootstrap-daterangepicker",
-  "version": "4.1.0",
-  "description":
-    "A date/time picker for react (using bootstrap). This is a react port of: https://github.com/dangrossman/bootstrap-daterangepicker",
+  "name": "bootstrap-daterangepicker-react",
+  "version": "1.0.1",
+  "description": "A date/time picker for react (using bootstrap). This is a fork of https://github.com/skratchdot/react-bootstrap-daterangepicker, which is a react port of https://github.com/dangrossman/bootstrap-daterangepicker",
   "main": "./dist/bundle.js",
-  "files": ["dist/"],
+  "files": [
+    "dist/"
+  ],
   "scripts": {
-    "build":
-      "npm-run-all clean build:options format cover build:lib build:storybook",
+    "build": "npm-run-all clean build:options format cover build:lib build:storybook",
     "build:lib": "rollup -c",
     "build:options": "./scripts/build-options.js",
     "build:storybook": "build-storybook -c .storybook -o ./docs",
-    "changelog":
-      "github_changelog_generator -u skratchdot -p react-bootstrap-daterangepicker",
     "clean": "rimraf ./coverage/ ./docs/",
     "cover": "npm run test -- --coverage",
     "coveralls": "cat coverage/lcov.info | coveralls --verbose",
@@ -22,15 +20,14 @@
     "watch": "npm-run-all --parallel watch:cover storybook",
     "watch:cover": "npm run cover -- --watch"
   },
-  "author": "skratchdot",
-  "homepage": "https://github.com/skratchdot/react-bootstrap-daterangepicker/",
+  "author": "dmacdnld",
+  "homepage": "https://github.com/dmacdnld/bootstrap-daterangepicker-react/",
   "repository": {
     "type": "git",
-    "url": "git://github.com/skratchdot/react-bootstrap-daterangepicker.git"
+    "url": "git://github.com/dmacdnld/bootstrap-daterangepicker-react.git"
   },
   "bugs": {
-    "url":
-      "https://github.com/skratchdot/react-bootstrap-daterangepicker/issues"
+    "url": "https://github.com/dmacdnld/bootstrap-daterangepicker-react/issues"
   },
   "license": "Apache-2.0",
   "peerDependencies": {
@@ -63,6 +60,7 @@
     "jquery": "^3.3.1",
     "lolex": "^2.3.2",
     "moment": "^2.20.1",
+    "moment-timezone": "^0.5.21",
     "npm-run-all": "^4.1.2",
     "prettier": "^1.10.2",
     "prop-types": "^15.6.0",

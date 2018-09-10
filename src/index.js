@@ -97,14 +97,27 @@ export class DateRangePicker extends Component {
     );
   }
   render() {
-    const { children, containerStyles, containerClass } = this.props;
+    const { containerStyles, containerClass, pickerId } = this.props;
+    let pickerFound = false;
+    const refProp = {
+      ref: picker => {
+        this.$picker = $(picker);
+      }
+    };
+    const children = React.Children.map(this.props.children, child => {
+      if (!pickerFound && child.props && child.props.id === pickerId) {
+        pickerFound = true;
+        return React.cloneElement(child, refProp);
+      } else {
+        return child;
+      }
+    });
+
     return (
       <div
-        ref={picker => {
-          this.$picker = $(picker);
-        }}
         className={containerClass}
         style={containerStyles}
+        {...(pickerFound ? {} : refProp)}
       >
         {children}
       </div>
