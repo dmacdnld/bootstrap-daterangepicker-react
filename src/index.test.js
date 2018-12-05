@@ -1,5 +1,5 @@
 import React from 'react';
-import { mount } from 'enzyme';
+import { mount, shallow } from 'enzyme';
 import DateRangePicker from './index.js';
 import lolex from 'lolex';
 
@@ -43,6 +43,7 @@ test('show picker', async () => {
       <button>click me</button>
     </DateRangePicker>
   );
+  debugger;
   const afterRender = document.body.innerHTML;
   expect(onShow).not.toHaveBeenCalled();
   wrapper.instance().$picker.click();

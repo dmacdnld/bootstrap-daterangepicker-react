@@ -8,8 +8,12 @@ import 'bootstrap-daterangepicker';
 export class DateRangePicker extends Component {
   constructor(props) {
     super(props);
+    this.state = {inputValue: "", isTyped: false}
     this.$picker = null;
     this.options = getOptions();
+    this.handleInput = this.handleInput.bind(this);
+    this.handleKeypress = this.handleKeypress.bind(this);
+    this.handleBlur = this.handleBlur.bind(this);
   }
   makeEventHandler(eventType) {
     const { onEvent } = this.props;
@@ -20,13 +24,18 @@ export class DateRangePicker extends Component {
       if (typeof this.props[eventType] === 'function') {
         this.props[eventType](event, picker);
       }
+      if(!this.props.children && eventType === "onApply") {
+        if(typeof this.props.handleSet === 'function') {
+          this.props.handleSet(picker.startDate.format(this.props.locale.format), picker.endDate.format(this.props.locale.format))
+        }
+      }
     };
   }
   getOptionsFromProps(props) {
     var options;
     props = props || this.props;
     this.options.forEach(option => {
-      if (props.hasOwnProperty(option)) {
+      if (props.hasOwnProperty(option) && props[option] !== null) {
         options = options || {};
         options[option] = props[option];
       }
@@ -38,11 +47,11 @@ export class DateRangePicker extends Component {
     if (this.$picker) {
       if (currentOptions) {
         keys.forEach(key => {
-          if (key === 'startDate') {
+          if (key === 'startDate' && currentOptions[key] !== null) {
             this.$picker
               .data('daterangepicker')
               .setStartDate(currentOptions[key]);
-          } else if (key === 'endDate') {
+          } else if (key === 'endDate' && currentOptions[key] !== null) {
             this.$picker
               .data('daterangepicker')
               .setEndDate(currentOptions[key]);
@@ -58,7 +67,20 @@ export class DateRangePicker extends Component {
       }
     }
   }
+  componentDidUpdate(prevProps) {
+    if(prevProps.startDate !== this.props.startDate || prevProps.endDate !== this.props.endDate) {
+      if(!this.props.startDate) {
+        this.setState({inputValue: ""})
+      }
+      if(this.props.startDate && !this.props.endDate || this.props.startDate === this.props.endDate) {
+        this.setState({inputValue: this.props.startDate})
+      } else {
+        this.setState({inputValue: `${this.props.startDate} - ${this.props.endDate}`})
+      }
+    }
+  }
   componentWillReceiveProps(nextProps) {
+    
     if (this.$picker) {
       var currentOptions = this.getOptionsFromProps();
       var nextOptions = this.getOptionsFromProps(nextProps);
@@ -96,32 +118,52 @@ export class DateRangePicker extends Component {
       }
     );
   }
+  handleInput(evt) {
+    this.setState({inputValue: evt.target.value})
+  }
+  handleKeypress(evt) {
+    if(evt.charCode === 13) {
+      this.props.handleSet(this.$picker.data('daterangepicker').startDate.format(this.props.locale.format), this.$picker.data('daterangepicker').endDate.format(this.props.locale.format));
+    } else {
+      this.setState({isTyped: evt.target.value.length > 0})
+    }
+  }
+  handleBlur(evt) {
+    if(this.state.isTyped) {
+    this.props.handleSet(this.$picker.data('daterangepicker').startDate.format(this.props.locale.format), this.$picker.data('daterangepicker').endDate.format(this.props.locale.format));
+    }
+  }
   render() {
-    const { containerStyles, containerClass, pickerId } = this.props;
-    let pickerFound = false;
-    const refProp = {
-      ref: picker => {
-        this.$picker = $(picker);
-      }
-    };
-    const children = React.Children.map(this.props.children, child => {
-      if (!pickerFound && child.props && child.props.id === pickerId) {
-        pickerFound = true;
-        return React.cloneElement(child, refProp);
-      } else {
-        return child;
-      }
-    });
-
-    return (
+    const { containerStyles, containerClass, children } = this.props;
+    if(children) {
+      return (
       <div
+        ref={picker => {
+          this.$picker = $(picker);
+        }}
         className={containerClass}
         style={containerStyles}
-        {...(pickerFound ? {} : refProp)}
       >
         {children}
       </div>
-    );
+      );
+    } else {
+      return (
+        <input
+          ref={picker => {
+            this.$picker = $(picker);
+          }}
+          className={containerClass}
+          style={containerStyles}
+          value={this.state.inputValue}
+          onChange={this.handleInput}
+          onKeyPress={this.handleKeypress}
+          onBlur={this.handleBlur}
+          placeholder={`${this.props.locale.format.toLowerCase()} - ${this.props.locale.format.toLowerCase()}`}
+        />
+      );
+    }
+    
   }
 }
 
