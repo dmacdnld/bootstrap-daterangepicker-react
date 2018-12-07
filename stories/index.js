@@ -8,20 +8,27 @@ import 'bootstrap/dist/css/bootstrap.css';
 import 'bootstrap-daterangepicker/daterangepicker.css';
 
 class DateRangeWrapper extends React.Component {
-  constructor(props){
+  constructor(props) {
     super(props);
-    this.state = { startDate: null,
-    endDate: null
-    }
+    this.state = {
+      startDate: null,
+      endDate: null
+    };
     this.handleSet = this.handleSet.bind(this);
   }
-   
+
   handleSet(startDate, endDate) {
-    this.setState({startDate, endDate})
+    this.setState({ startDate, endDate });
   }
   render() {
-    return(
-    <DateRangePicker startDate={this.state.startDate} endDate={this.state.endDate} handleSet={this.handleSet} autoUpdateInput={false} locale={{format:"MM/DD/YYYY"}} />
+    return (
+      <DateRangePicker
+        startDate={this.state.startDate}
+        endDate={this.state.endDate}
+        handleSet={this.handleSet}
+        autoUpdateInput={false}
+        locale={{ format: 'MM/DD/YYYY' }}
+      />
     );
   }
 }
@@ -42,15 +49,13 @@ storiesOf('DateRangePicker', module)
     const startDate = text('startDate', '1/1/2017');
     const endDate = text('endDate', '1/5/2017');
     return (
-      <DateRangePicker startDate={startDate} endDate={endDate}  > 
+      <DateRangePicker startDate={startDate} endDate={endDate}>
         <button>{buttonLabel}</button>
       </DateRangePicker>
     );
   })
   .add('with input', () => {
-    return (
-        <DateRangeWrapper />
-    );
+    return <DateRangeWrapper />;
   })
   .add('log events', () => {
     const buttonLabel = text('label', 'click to open');

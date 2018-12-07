@@ -46,20 +46,6 @@ var createClass = function () {
 
 
 
-var _extends = Object.assign || function (target) {
-  for (var i = 1; i < arguments.length; i++) {
-    var source = arguments[i];
-
-    for (var key in source) {
-      if (Object.prototype.hasOwnProperty.call(source, key)) {
-        target[key] = source[key];
-      }
-    }
-  }
-
-  return target;
-};
-
 
 
 var inherits = function (subClass, superClass) {
@@ -104,8 +90,12 @@ var DateRangePicker = function (_Component) {
 
     var _this = possibleConstructorReturn(this, (DateRangePicker.__proto__ || Object.getPrototypeOf(DateRangePicker)).call(this, props));
 
+    _this.state = { inputValue: '', isTyped: false };
     _this.$picker = null;
     _this.options = getOptions();
+    _this.handleInput = _this.handleInput.bind(_this);
+    _this.handleKeypress = _this.handleKeypress.bind(_this);
+    _this.handleBlur = _this.handleBlur.bind(_this);
     return _this;
   }
 
@@ -123,6 +113,11 @@ var DateRangePicker = function (_Component) {
         if (typeof _this2.props[eventType] === 'function') {
           _this2.props[eventType](event, picker);
         }
+        if (!_this2.props.children && eventType === 'onApply') {
+          if (typeof _this2.props.handleSet === 'function') {
+            _this2.props.handleSet(picker.startDate.format(_this2.props.locale.format), picker.endDate.format(_this2.props.locale.format));
+          }
+        }
       };
     }
   }, {
@@ -131,7 +126,7 @@ var DateRangePicker = function (_Component) {
       var options;
       props = props || this.props;
       this.options.forEach(function (option) {
-        if (props.hasOwnProperty(option)) {
+        if (props.hasOwnProperty(option) && props[option] !== null) {
           options = options || {};
           options[option] = props[option];
         }
@@ -147,15 +142,31 @@ var DateRangePicker = function (_Component) {
       if (this.$picker) {
         if (currentOptions) {
           keys.forEach(function (key) {
-            if (key === 'startDate') {
+            if (key === 'startDate' && currentOptions[key] !== null) {
               _this3.$picker.data('daterangepicker').setStartDate(currentOptions[key]);
-            } else if (key === 'endDate') {
+            } else if (key === 'endDate' && currentOptions[key] !== null) {
               _this3.$picker.data('daterangepicker').setEndDate(currentOptions[key]);
             } else if (key === 'locale') {
               $.extend(_this3.$picker.data('daterangepicker')[key], currentOptions[key]);
             } else {
               _this3.$picker.data('daterangepicker')[key] = currentOptions[key];
             }
+          });
+        }
+      }
+    }
+  }, {
+    key: 'componentDidUpdate',
+    value: function componentDidUpdate(prevProps) {
+      if (prevProps.startDate !== this.props.startDate || prevProps.endDate !== this.props.endDate) {
+        if (!this.props.startDate) {
+          this.setState({ inputValue: '' });
+        }
+        if (this.props.startDate && !this.props.endDate || this.props.startDate === this.props.endDate) {
+          this.setState({ inputValue: this.props.startDate });
+        } else {
+          this.setState({
+            inputValue: this.props.startDate + ' - ' + this.props.endDate
           });
         }
       }
@@ -206,6 +217,27 @@ var DateRangePicker = function (_Component) {
       });
     }
   }, {
+    key: 'handleInput',
+    value: function handleInput(evt) {
+      this.setState({ inputValue: evt.target.value });
+    }
+  }, {
+    key: 'handleKeypress',
+    value: function handleKeypress(evt) {
+      if (evt.charCode === 13) {
+        this.props.handleSet(this.$picker.data('daterangepicker').startDate.format(this.props.locale.format), this.$picker.data('daterangepicker').endDate.format(this.props.locale.format));
+      } else {
+        this.setState({ isTyped: evt.target.value.length > 0 });
+      }
+    }
+  }, {
+    key: 'handleBlur',
+    value: function handleBlur(evt) {
+      if (this.state.isTyped) {
+        this.props.handleSet(this.$picker.data('daterangepicker').startDate.format(this.props.locale.format), this.$picker.data('daterangepicker').endDate.format(this.props.locale.format));
+      }
+    }
+  }, {
     key: 'render',
     value: function render() {
       var _this5 = this;
@@ -213,31 +245,34 @@ var DateRangePicker = function (_Component) {
       var _props = this.props,
           containerStyles = _props.containerStyles,
           containerClass = _props.containerClass,
-          pickerId = _props.pickerId;
+          children = _props.children;
 
-      var pickerFound = false;
-      var refProp = {
-        ref: function ref(picker) {
-          _this5.$picker = $(picker);
-        }
-      };
-      var children = React__default.Children.map(this.props.children, function (child) {
-        if (!pickerFound && child.props && child.props.id === pickerId) {
-          pickerFound = true;
-          return React__default.cloneElement(child, refProp);
-        } else {
-          return child;
-        }
-      });
-
-      return React__default.createElement(
-        'div',
-        _extends({
+      if (children) {
+        return React__default.createElement(
+          'div',
+          {
+            ref: function ref(picker) {
+              _this5.$picker = $(picker);
+            },
+            className: containerClass,
+            style: containerStyles
+          },
+          children
+        );
+      } else {
+        return React__default.createElement('input', {
+          ref: function ref(picker) {
+            _this5.$picker = $(picker);
+          },
           className: containerClass,
-          style: containerStyles
-        }, pickerFound ? {} : refProp),
-        children
-      );
+          style: containerStyles,
+          value: this.state.inputValue,
+          onChange: this.handleInput,
+          onKeyPress: this.handleKeypress,
+          onBlur: this.handleBlur,
+          placeholder: this.props.locale.format.toLowerCase() + ' - ' + this.props.locale.format.toLowerCase()
+        });
+      }
     }
   }]);
   return DateRangePicker;

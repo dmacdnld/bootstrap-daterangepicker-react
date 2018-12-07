@@ -8,7 +8,7 @@ import 'bootstrap-daterangepicker';
 export class DateRangePicker extends Component {
   constructor(props) {
     super(props);
-    this.state = {inputValue: "", isTyped: false}
+    this.state = { inputValue: '', isTyped: false };
     this.$picker = null;
     this.options = getOptions();
     this.handleInput = this.handleInput.bind(this);
@@ -24,9 +24,12 @@ export class DateRangePicker extends Component {
       if (typeof this.props[eventType] === 'function') {
         this.props[eventType](event, picker);
       }
-      if(!this.props.children && eventType === "onApply") {
-        if(typeof this.props.handleSet === 'function') {
-          this.props.handleSet(picker.startDate.format(this.props.locale.format), picker.endDate.format(this.props.locale.format))
+      if (!this.props.children && eventType === 'onApply') {
+        if (typeof this.props.handleSet === 'function') {
+          this.props.handleSet(
+            picker.startDate.format(this.props.locale.format),
+            picker.endDate.format(this.props.locale.format)
+          );
         }
       }
     };
@@ -68,19 +71,26 @@ export class DateRangePicker extends Component {
     }
   }
   componentDidUpdate(prevProps) {
-    if(prevProps.startDate !== this.props.startDate || prevProps.endDate !== this.props.endDate) {
-      if(!this.props.startDate) {
-        this.setState({inputValue: ""})
+    if (
+      prevProps.startDate !== this.props.startDate ||
+      prevProps.endDate !== this.props.endDate
+    ) {
+      if (!this.props.startDate) {
+        this.setState({ inputValue: '' });
       }
-      if(this.props.startDate && !this.props.endDate || this.props.startDate === this.props.endDate) {
-        this.setState({inputValue: this.props.startDate})
+      if (
+        (this.props.startDate && !this.props.endDate) ||
+        this.props.startDate === this.props.endDate
+      ) {
+        this.setState({ inputValue: this.props.startDate });
       } else {
-        this.setState({inputValue: `${this.props.startDate} - ${this.props.endDate}`})
+        this.setState({
+          inputValue: `${this.props.startDate} - ${this.props.endDate}`
+        });
       }
     }
   }
   componentWillReceiveProps(nextProps) {
-    
     if (this.$picker) {
       var currentOptions = this.getOptionsFromProps();
       var nextOptions = this.getOptionsFromProps(nextProps);
@@ -119,33 +129,47 @@ export class DateRangePicker extends Component {
     );
   }
   handleInput(evt) {
-    this.setState({inputValue: evt.target.value})
+    this.setState({ inputValue: evt.target.value });
   }
   handleKeypress(evt) {
-    if(evt.charCode === 13) {
-      this.props.handleSet(this.$picker.data('daterangepicker').startDate.format(this.props.locale.format), this.$picker.data('daterangepicker').endDate.format(this.props.locale.format));
+    if (evt.charCode === 13) {
+      this.props.handleSet(
+        this.$picker
+          .data('daterangepicker')
+          .startDate.format(this.props.locale.format),
+        this.$picker
+          .data('daterangepicker')
+          .endDate.format(this.props.locale.format)
+      );
     } else {
-      this.setState({isTyped: evt.target.value.length > 0})
+      this.setState({ isTyped: evt.target.value.length > 0 });
     }
   }
   handleBlur(evt) {
-    if(this.state.isTyped) {
-    this.props.handleSet(this.$picker.data('daterangepicker').startDate.format(this.props.locale.format), this.$picker.data('daterangepicker').endDate.format(this.props.locale.format));
+    if (this.state.isTyped) {
+      this.props.handleSet(
+        this.$picker
+          .data('daterangepicker')
+          .startDate.format(this.props.locale.format),
+        this.$picker
+          .data('daterangepicker')
+          .endDate.format(this.props.locale.format)
+      );
     }
   }
   render() {
     const { containerStyles, containerClass, children } = this.props;
-    if(children) {
+    if (children) {
       return (
-      <div
-        ref={picker => {
-          this.$picker = $(picker);
-        }}
-        className={containerClass}
-        style={containerStyles}
-      >
-        {children}
-      </div>
+        <div
+          ref={picker => {
+            this.$picker = $(picker);
+          }}
+          className={containerClass}
+          style={containerStyles}
+        >
+          {children}
+        </div>
       );
     } else {
       return (
@@ -163,7 +187,6 @@ export class DateRangePicker extends Component {
         />
       );
     }
-    
   }
 }
 
