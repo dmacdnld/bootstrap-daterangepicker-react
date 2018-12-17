@@ -18,6 +18,7 @@ class DateRangeWrapper extends React.Component {
   }
 
   handleSet(startDate, endDate) {
+    console.log(startDate, endDate);
     this.setState({ startDate, endDate });
   }
   render() {

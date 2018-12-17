@@ -1,14 +1,15 @@
-'use strict';
-import React, { Component } from 'react';
-import $ from 'jquery';
-import getOptions from './get-options.js';
-import PropTypes from 'prop-types';
-import 'bootstrap-daterangepicker';
+"use strict";
+import React, { Component } from "react";
+import $ from "jquery";
+import getOptions from "./get-options.js";
+import PropTypes from "prop-types";
+import moment from "moment";
+import "bootstrap-daterangepicker";
 
 export class DateRangePicker extends Component {
   constructor(props) {
     super(props);
-    this.state = { inputValue: '', isTyped: false };
+    this.state = { inputValue: "", isTyped: false };
     this.$picker = null;
     this.options = getOptions();
     this.handleInput = this.handleInput.bind(this);
@@ -18,14 +19,14 @@ export class DateRangePicker extends Component {
   makeEventHandler(eventType) {
     const { onEvent } = this.props;
     return (event, picker) => {
-      if (typeof onEvent === 'function') {
+      if (typeof onEvent === "function") {
         onEvent(event, picker);
       }
-      if (typeof this.props[eventType] === 'function') {
+      if (typeof this.props[eventType] === "function") {
         this.props[eventType](event, picker);
       }
-      if (!this.props.children && eventType === 'onApply') {
-        if (typeof this.props.handleSet === 'function') {
+      if (!this.props.children && eventType === "onApply") {
+        if (typeof this.props.handleSet === "function") {
           this.props.handleSet(
             picker.startDate.format(this.props.locale.format),
             picker.endDate.format(this.props.locale.format)
@@ -38,9 +39,22 @@ export class DateRangePicker extends Component {
     var options;
     props = props || this.props;
     this.options.forEach(option => {
-      if (props.hasOwnProperty(option) && props[option] !== null) {
+      if (
+        props.hasOwnProperty(option) &&
+        (props[option] !== null ||
+          option === "startDate" ||
+          option === "endDate")
+      ) {
         options = options || {};
-        options[option] = props[option];
+        if (
+          (option === "startDate" && !props[option]) ||
+          (option === "endDate" && !props[option])
+        ) {
+          const defaultDate = moment().startOf("day");
+          options[option] = defaultDate;
+        } else {
+          options[option] = props[option];
+        }
       }
     });
     return options || {};
@@ -50,21 +64,21 @@ export class DateRangePicker extends Component {
     if (this.$picker) {
       if (currentOptions) {
         keys.forEach(key => {
-          if (key === 'startDate' && currentOptions[key] !== null) {
+          if (key === "startDate") {
             this.$picker
-              .data('daterangepicker')
+              .data("daterangepicker")
               .setStartDate(currentOptions[key]);
-          } else if (key === 'endDate' && currentOptions[key] !== null) {
+          } else if (key === "endDate") {
             this.$picker
-              .data('daterangepicker')
+              .data("daterangepicker")
               .setEndDate(currentOptions[key]);
-          } else if (key === 'locale') {
+          } else if (key === "locale") {
             $.extend(
-              this.$picker.data('daterangepicker')[key],
+              this.$picker.data("daterangepicker")[key],
               currentOptions[key]
             );
           } else {
-            this.$picker.data('daterangepicker')[key] = currentOptions[key];
+            this.$picker.data("daterangepicker")[key] = currentOptions[key];
           }
         });
       }
@@ -76,7 +90,7 @@ export class DateRangePicker extends Component {
       prevProps.endDate !== this.props.endDate
     ) {
       if (!this.props.startDate) {
-        this.setState({ inputValue: '' });
+        this.setState({ inputValue: "" });
       }
       if (
         (this.props.startDate && !this.props.endDate) ||
@@ -110,20 +124,20 @@ export class DateRangePicker extends Component {
     this.removeDateRangePicker();
   }
   removeDateRangePicker() {
-    if (this.$picker && this.$picker.data('daterangepicker')) {
-      this.$picker.data('daterangepicker').remove();
+    if (this.$picker && this.$picker.data("daterangepicker")) {
+      this.$picker.data("daterangepicker").remove();
     }
   }
   initializeDateRangePicker() {
     // initialize
     this.$picker.daterangepicker(this.getOptionsFromProps());
     // attach event listeners
-    ['Show', 'Hide', 'ShowCalendar', 'HideCalendar', 'Apply', 'Cancel'].forEach(
+    ["Show", "Hide", "ShowCalendar", "HideCalendar", "Apply", "Cancel"].forEach(
       event => {
         var lcase = event.toLowerCase();
         this.$picker.on(
-          lcase + '.daterangepicker',
-          this.makeEventHandler('on' + event)
+          lcase + ".daterangepicker",
+          this.makeEventHandler("on" + event)
         );
       }
     );
@@ -133,29 +147,36 @@ export class DateRangePicker extends Component {
   }
   handleKeypress(evt) {
     if (evt.charCode === 13) {
-      this.props.handleSet(
-        this.$picker
-          .data('daterangepicker')
-          .startDate.format(this.props.locale.format),
-        this.$picker
-          .data('daterangepicker')
-          .endDate.format(this.props.locale.format)
-      );
-    } else {
-      this.setState({ isTyped: evt.target.value.length > 0 });
+      if (evt.target.value) {
+        this.props.handleSet(
+          this.$picker
+            .data("daterangepicker")
+            .startDate.format(this.props.locale.format),
+          this.$picker
+            .data("daterangepicker")
+            .endDate.format(this.props.locale.format)
+        );
+      } else {
+        this.props.handleSet(null, null);
+      }
     }
+    this.setState({ isTyped: true });
   }
   handleBlur(evt) {
     if (this.state.isTyped) {
       this.props.handleSet(
         this.$picker
-          .data('daterangepicker')
+          .data("daterangepicker")
           .startDate.format(this.props.locale.format),
         this.$picker
-          .data('daterangepicker')
+          .data("daterangepicker")
           .endDate.format(this.props.locale.format)
       );
     }
+    if (!evt.target.value && this.state.isTyped) {
+      this.props.handleSet(null, null);
+    }
+    this.setState({ isTyped: false });
   }
   render() {
     const { containerStyles, containerClass, children } = this.props;
@@ -179,11 +200,15 @@ export class DateRangePicker extends Component {
           }}
           className={containerClass}
           style={containerStyles}
-          value={this.state.inputValue}
+          value={this.state.inputValue ? this.state.inputValue : ""}
           onChange={this.handleInput}
-          onKeyPress={this.handleKeypress}
+          onKeyDown={this.handleKeypress}
           onBlur={this.handleBlur}
-          placeholder={`${this.props.locale.format.toLowerCase()} - ${this.props.locale.format.toLowerCase()}`}
+          placeholder={
+            this.props.inputPlaceholder
+              ? this.props.inputPlaceholder
+              : `${this.props.locale.format.toLowerCase()} - ${this.props.locale.format.toLowerCase()}`
+          }
         />
       );
     }
@@ -191,14 +216,14 @@ export class DateRangePicker extends Component {
 }
 
 DateRangePicker.defaultProps = {
-  containerClass: 'react-bootstrap-daterangepicker-container',
+  containerClass: "react-bootstrap-daterangepicker-container",
   containerStyles: {
-    display: 'inline-block'
+    display: "inline-block"
   }
 };
 
 DateRangePicker.propTypes = {
-  '<input>': PropTypes.any,
+  "<input>": PropTypes.any,
   alwaysShowCalendars: PropTypes.bool,
   applyClass: PropTypes.string,
   autoApply: PropTypes.bool,
@@ -208,7 +233,7 @@ DateRangePicker.propTypes = {
   containerClass: PropTypes.string,
   containerStyles: PropTypes.object,
   dateLimit: PropTypes.object,
-  drops: PropTypes.oneOf(['down', 'up']),
+  drops: PropTypes.oneOf(["down", "up"]),
   endDate: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
   isCustomDate: PropTypes.func,
   isInvalidDate: PropTypes.func,
@@ -223,7 +248,7 @@ DateRangePicker.propTypes = {
   onHideCalendar: PropTypes.func,
   onShow: PropTypes.func,
   onShowCalendar: PropTypes.func,
-  opens: PropTypes.oneOf(['left', 'right', 'center']),
+  opens: PropTypes.oneOf(["left", "right", "center"]),
   parentEl: PropTypes.any,
   ranges: PropTypes.object,
   showCustomRangeLabel: PropTypes.bool,
