@@ -1,13 +1,13 @@
 {
   "name": "bootstrap-daterangepicker-react",
-  "version": "2.0.1",
-  "description": "A date/time picker for react (using bootstrap). This is a fork of https://github.com/skratchdot/react-bootstrap-daterangepicker, which is a react port of https://github.com/dangrossman/bootstrap-daterangepicker",
+  "version": "2.0.2",
+  "description":
+    "A date/time picker for react (using bootstrap). This is a fork of https://github.com/skratchdot/react-bootstrap-daterangepicker, which is a react port of https://github.com/dangrossman/bootstrap-daterangepicker",
   "main": "./dist/bundle.js",
-  "files": [
-    "dist/"
-  ],
+  "files": ["dist/"],
   "scripts": {
-    "build": "npm-run-all clean build:options format cover build:lib build:storybook",
+    "build":
+      "npm-run-all clean build:options format cover build:lib build:storybook",
     "build:lib": "rollup -c",
     "build:options": "./scripts/build-options.js",
     "build:storybook": "build-storybook -c .storybook -o ./docs",
