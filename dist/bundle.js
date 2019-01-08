@@ -196,6 +196,15 @@ var DateRangePicker = function (_Component) {
     key: 'componentDidMount',
     value: function componentDidMount() {
       this.initializeDateRangePicker();
+      if (!this.props.startDate) {
+        this.setState({ inputValue: '' });
+      } else if (this.props.startDate && !this.props.endDate || this.props.startDate === this.props.endDate) {
+        this.setState({ inputValue: this.props.startDate });
+      } else {
+        this.setState({
+          inputValue: this.props.startDate + ' - ' + this.props.endDate
+        });
+      }
     }
   }, {
     key: 'componentWillUnmount',

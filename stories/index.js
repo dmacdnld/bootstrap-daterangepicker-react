@@ -13,7 +13,7 @@ class DateRangeWrapper extends React.Component {
     this.state = {
       startDate: null,
       endDate: null,
-      open: true,
+      open: true
     };
     this.handleSet = this.handleSet.bind(this);
     this.onCancel = this.onCancel.bind(this);
@@ -25,31 +25,37 @@ class DateRangeWrapper extends React.Component {
   }
 
   onCancel(startDate, endDate) {
-    this.setState({startDate: "", endDate: ""})
+    this.setState({ startDate: '', endDate: '' });
   }
   render() {
     return (
       <React.Fragment>
-        <a onClick={() => {this.setState({open: !this.state.open})}}>TOGGLE</a>
+        <a
+          onClick={() => {
+            this.setState({ open: !this.state.open });
+          }}
+        >
+          TOGGLE
+        </a>
         {this.state.open && (
           <React.Fragment>
-        <DateRangePicker
-          startDate={this.state.startDate}
-          endDate={this.state.endDate}
-          handleSet={this.handleSet}
-          onCancel={this.onCancel}
-          autoUpdateInput={false}
-          locale={{ format: 'MM/DD/YYYY' }}
-        />
-        <DateRangePicker
-          startDate={this.state.startDate}
-          singleDatePicker
-          handleSet={this.handleSet}
-          inputPlaceholder={"mm/dd/yyyy"}
-          autoUpdateInput={false}
-          locale={{ format: 'MM/DD/YYYY' }}
-        />
-        </React.Fragment>
+            <DateRangePicker
+              startDate={this.state.startDate}
+              endDate={this.state.endDate}
+              handleSet={this.handleSet}
+              onCancel={this.onCancel}
+              autoUpdateInput={false}
+              locale={{ format: 'MM/DD/YYYY' }}
+            />
+            <DateRangePicker
+              startDate={this.state.startDate}
+              singleDatePicker
+              handleSet={this.handleSet}
+              inputPlaceholder={'mm/dd/yyyy'}
+              autoUpdateInput={false}
+              locale={{ format: 'MM/DD/YYYY' }}
+            />
+          </React.Fragment>
         )}
       </React.Fragment>
     );

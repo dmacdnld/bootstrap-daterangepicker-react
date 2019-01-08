@@ -120,7 +120,7 @@ export class DateRangePicker extends Component {
   componentDidMount() {
     this.initializeDateRangePicker();
     if (!this.props.startDate) {
-      this.setState({ inputValue: "" });
+      this.setState({ inputValue: '' });
     } else if (
       (this.props.startDate && !this.props.endDate) ||
       this.props.startDate === this.props.endDate
