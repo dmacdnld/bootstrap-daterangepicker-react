@@ -12,24 +12,46 @@ class DateRangeWrapper extends React.Component {
     super(props);
     this.state = {
       startDate: null,
-      endDate: null
+      endDate: null,
+      open: true,
     };
     this.handleSet = this.handleSet.bind(this);
+    this.onCancel = this.onCancel.bind(this);
   }
 
   handleSet(startDate, endDate) {
     console.log(startDate, endDate);
     this.setState({ startDate, endDate });
   }
+
+  onCancel(startDate, endDate) {
+    this.setState({startDate: "", endDate: ""})
+  }
   render() {
     return (
-      <DateRangePicker
-        startDate={this.state.startDate}
-        endDate={this.state.endDate}
-        handleSet={this.handleSet}
-        autoUpdateInput={false}
-        locale={{ format: 'MM/DD/YYYY' }}
-      />
+      <React.Fragment>
+        <a onClick={() => {this.setState({open: !this.state.open})}}>TOGGLE</a>
+        {this.state.open && (
+          <React.Fragment>
+        <DateRangePicker
+          startDate={this.state.startDate}
+          endDate={this.state.endDate}
+          handleSet={this.handleSet}
+          onCancel={this.onCancel}
+          autoUpdateInput={false}
+          locale={{ format: 'MM/DD/YYYY' }}
+        />
+        <DateRangePicker
+          startDate={this.state.startDate}
+          singleDatePicker
+          handleSet={this.handleSet}
+          inputPlaceholder={"mm/dd/yyyy"}
+          autoUpdateInput={false}
+          locale={{ format: 'MM/DD/YYYY' }}
+        />
+        </React.Fragment>
+        )}
+      </React.Fragment>
     );
   }
 }

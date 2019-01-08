@@ -91,8 +91,7 @@ export class DateRangePicker extends Component {
     ) {
       if (!this.props.startDate) {
         this.setState({ inputValue: "" });
-      }
-      if (
+      } else if (
         (this.props.startDate && !this.props.endDate) ||
         this.props.startDate === this.props.endDate
       ) {
@@ -119,6 +118,18 @@ export class DateRangePicker extends Component {
   }
   componentDidMount() {
     this.initializeDateRangePicker();
+    if (!this.props.startDate) {
+      this.setState({ inputValue: "" });
+    } else if (
+      (this.props.startDate && !this.props.endDate) ||
+      this.props.startDate === this.props.endDate
+    ) {
+      this.setState({ inputValue: this.props.startDate });
+    } else {
+      this.setState({
+        inputValue: `${this.props.startDate} - ${this.props.endDate}`
+      });
+    }
   }
   componentWillUnmount() {
     this.removeDateRangePicker();
