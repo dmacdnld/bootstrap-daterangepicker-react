@@ -153,6 +153,56 @@ export class DateRangePicker extends Component {
         );
       }
     );
+
+    var daterangepicker = this.$picker.data("daterangepicker");
+    daterangepicker._setEndDate = daterangepicker.setEndDate;
+    daterangepicker.setEndDate = function (endDate) {
+      this._setEndDate(endDate);
+      this.container.find('button.applyBtn').show();
+      this.container.find('button.cancelBtn').show();
+    };
+
+    daterangepicker._updateFormInputs = daterangepicker.updateFormInputs;
+    daterangepicker.updateFormInputs = function () {
+      this._updateFormInputs();
+      if (!(this.singleDatePicker || (this.endDate && (this.startDate.isBefore(this.endDate) || this.startDate.isSame(this.endDate))))) {
+        this.container.find('button.applyBtn').hide();
+        this.container.find('button.cancelBtn').hide();
+      }
+    };
+
+    daterangepicker._clickUseRollingDates = daterangepicker.clickUseRollingDates;
+    daterangepicker.clickUseRollingDates = function (e) {
+      this._clickUseRollingDates(e);
+      this.container.find('button.applyBtn').show();
+      this.container.find('button.cancelBtn').show();
+    };
+
+    this.$picker.on('show.daterangepicker', function (ev, picker) {
+      picker.container.find('button.applyBtn').hide();
+      picker.container.find('button.cancelBtn').hide();
+      if (!this.singleDatePicker) {
+        picker.container.find('div.calendar-table').addClass("palm-nudge-half palm-box--rounded-border-grey");
+      }
+    });
+
+    daterangepicker._move = daterangepicker.move;
+    daterangepicker.move = function () {
+      this._move();
+      this.container.css("width", "");
+      if ($(window).width() < tabletMinResolution) {
+        this.container.width(this.container.hasClass('show-calendar') ?
+          this.container.find('.calendar.left').outerWidth() : this.container.find('.ranges').outerWidth());
+      }
+      if (this.opens !== 'left' && this.opens !== 'center') {
+        if (this.container.offset().left + this.container.outerWidth() >= $(window).width()) {
+          this.container.css({
+            left: 'auto',
+            right: 0
+          });
+        }
+      }
+    };
   }
   handleInput(evt) {
     this.setState({ inputValue: evt.target.value });
