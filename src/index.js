@@ -186,11 +186,12 @@ export class DateRangePicker extends Component {
       }
     });
 
+    var tabletMinResolution = parseInt(this.props.tabletMinResolution);
     daterangepicker._move = daterangepicker.move;
     daterangepicker.move = function () {
       this._move();
       this.container.css("width", "");
-      if ($(window).width() < tabletMinResolution) {
+      if (!isNaN(tabletMinResolution) && $(window).width() < tabletMinResolution) {
         this.container.width(this.container.hasClass('show-calendar') ?
           this.container.find('.calendar.left').outerWidth() : this.container.find('.ranges').outerWidth());
       }
