@@ -181,9 +181,6 @@ export class DateRangePicker extends Component {
     this.$picker.on('show.daterangepicker', function (ev, picker) {
       picker.container.find('button.applyBtn').hide();
       picker.container.find('button.cancelBtn').hide();
-      if (!this.singleDatePicker) {
-        picker.container.find('div.calendar-table').addClass("palm-nudge-half palm-box--rounded-border-grey");
-      }
     });
 
     var tabletMinResolution = parseInt(this.props.tabletMinResolution);
