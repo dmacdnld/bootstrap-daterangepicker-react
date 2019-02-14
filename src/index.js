@@ -155,34 +155,6 @@ export class DateRangePicker extends Component {
     );
 
     var daterangepicker = this.$picker.data("daterangepicker");
-    daterangepicker._setEndDate = daterangepicker.setEndDate;
-    daterangepicker.setEndDate = function (endDate) {
-      this._setEndDate(endDate);
-      this.container.find('button.applyBtn').show();
-      this.container.find('button.cancelBtn').show();
-    };
-
-    daterangepicker._updateFormInputs = daterangepicker.updateFormInputs;
-    daterangepicker.updateFormInputs = function () {
-      this._updateFormInputs();
-      if (!(this.singleDatePicker || (this.endDate && (this.startDate.isBefore(this.endDate) || this.startDate.isSame(this.endDate))))) {
-        this.container.find('button.applyBtn').hide();
-        this.container.find('button.cancelBtn').hide();
-      }
-    };
-
-    daterangepicker._clickUseRollingDates = daterangepicker.clickUseRollingDates;
-    daterangepicker.clickUseRollingDates = function (e) {
-      this._clickUseRollingDates(e);
-      this.container.find('button.applyBtn').show();
-      this.container.find('button.cancelBtn').show();
-    };
-
-    this.$picker.on('show.daterangepicker', function (ev, picker) {
-      picker.container.find('button.applyBtn').hide();
-      picker.container.find('button.cancelBtn').hide();
-    });
-
     var tabletMinResolution = parseInt(this.props.tabletMinResolution);
     daterangepicker._move = daterangepicker.move;
     daterangepicker.move = function () {
