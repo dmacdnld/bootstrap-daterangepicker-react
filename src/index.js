@@ -153,6 +153,26 @@ export class DateRangePicker extends Component {
         );
       }
     );
+
+    var daterangepicker = this.$picker.data("daterangepicker");
+    var tabletMinResolution = parseInt(this.props.tabletMinResolution);
+    daterangepicker._move = daterangepicker.move;
+    daterangepicker.move = function () {
+      this._move();
+      this.container.css("width", "");
+      if (!isNaN(tabletMinResolution) && $(window).width() < tabletMinResolution) {
+        this.container.width(this.container.hasClass('show-calendar') ?
+          this.container.find('.calendar.left').outerWidth() : this.container.find('.ranges').outerWidth());
+      }
+      if (this.opens !== 'left' && this.opens !== 'center') {
+        if (this.container.offset().left + this.container.outerWidth() >= $(window).width()) {
+          this.container.css({
+            left: 'auto',
+            right: 0
+          });
+        }
+      }
+    };
   }
   handleInput(evt) {
     this.setState({ inputValue: evt.target.value });
