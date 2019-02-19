@@ -230,6 +230,25 @@ var DateRangePicker = function (_Component) {
         var lcase = event.toLowerCase();
         _this4.$picker.on(lcase + '.daterangepicker', _this4.makeEventHandler('on' + event));
       });
+
+      var daterangepicker = this.$picker.data("daterangepicker");
+      var tabletMinResolution = parseInt(this.props.tabletMinResolution);
+      daterangepicker._move = daterangepicker.move;
+      daterangepicker.move = function () {
+        this._move();
+        this.container.css("width", "");
+        if (!isNaN(tabletMinResolution) && $(window).width() < tabletMinResolution) {
+          this.container.width(this.container.hasClass('show-calendar') ? this.container.find('.calendar.left').outerWidth() : this.container.find('.ranges').outerWidth());
+        }
+        if (this.opens !== 'left' && this.opens !== 'center') {
+          if (this.container.offset().left + this.container.outerWidth() >= $(window).width()) {
+            this.container.css({
+              left: 'auto',
+              right: 0
+            });
+          }
+        }
+      };
     }
   }, {
     key: 'handleInput',
